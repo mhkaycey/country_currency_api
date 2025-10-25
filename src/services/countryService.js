@@ -159,11 +159,17 @@ class CountryService {
 
   async deleteCountry(name) {
     try {
+      const country = await CountryModel.findByName(name);
+      if (!country) {
+        return { deleted: false, message: "Country not found" };
+      }
+
       const deleted = await CountryModel.deleteByName(name);
-      if (!deleted) throw new Error("Country not found");
-      return { message: "Country deleted successfully" };
+      return {
+        deleted: deleted,
+        message: deleted ? "Country deleted successfully" : "Country not found",
+      };
     } catch (error) {
-      if (error.message === "Country not found") throw error;
       console.error("Error deleting country:", error);
       throw new Error("Failed to delete country");
     }

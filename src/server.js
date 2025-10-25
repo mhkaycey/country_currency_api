@@ -74,8 +74,15 @@ app.use((error, req, res, next) => {
 
 app.listen(PORT, () => {
   console.log(`Country Currency API running on port ${PORT}`);
-  console.info(`Server URL: ${SERVER_URL}:${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV}`);
+  console.log("Available routes:");
+  console.log("  POST /countries/refresh");
+  console.log("  GET  /countries");
+  console.log("  GET  /countries/:name");
+  console.log("  DELETE /countries/:name");
+  console.log("  GET  /status");
+  console.log("  GET  /countries/image");
+  console.log("  GET  /health");
 });
 
 export default app;

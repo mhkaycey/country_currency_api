@@ -1,4 +1,4 @@
-import { database } from "../config/database.config.js";
+import database from "../config/database.config.js";
 
 async function createTables() {
   try {

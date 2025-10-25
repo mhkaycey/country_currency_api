@@ -1,29 +1,73 @@
 import database from "../config/database.config.js";
 
 class CountryModel {
+  // static async findAll(filters = {}) {
+  //   try {
+  //     let query = `
+  //       SELECT id, name, capital, region, population, currency_code, exchange_rate, estimated_gdp, flag_url, last_refreshed_at
+  //       FROM countries
+  //       WHERE 1 = 1
+  //       `;
+  //     const params = [];
+
+  //     if (filters.region) {
+  //       query += ` AND region = ?`;
+  //       params.push(filters.region);
+  //     }
+
+  //     if (filters.currency) {
+  //       query += ` AND currency_code = ?`;
+  //       params.push(filters.currency);
+  //     }
+
+  //     if (filters.sort) {
+  //       const sortMapping = {
+  //         gdp_desc: "estimated_gdp DESC",
+  //         gdp_asc: "estimated_gdp ASC",
+  //         name_asc: "name ASC",
+  //         name_desc: "name DESC",
+  //         population_desc: "population DESC",
+  //         population_asc: "population ASC",
+  //       };
+  //       query += ` ORDER BY ${sortMapping[filters.sort] || "name ASC"}`;
+  //     } else {
+  //       query += ` ORDER BY name ASC`;
+  //     }
+  //     const results = await database.query(query, params);
+
+  //     return Array.isArray(results) ? results : [];
+  //   } catch (error) {
+  //     console.error("Error in Country.findAll:", error);
+  //     return [];
+  //   }
+  // }
+
+  // src/models/Country.js - Fix sorting query
   static async findAll(filters = {}) {
     try {
       let query = `
-        SELECT id, name, capital, region, population, currency_code, exchange_rate, estimated_gdp, flag_url, last_refreshed_at
-        FROM countries
-        WHERE 1 = 1
-        `;
+      SELECT id, name, capital, region, population, currency_code, 
+             exchange_rate, estimated_gdp, flag_url, last_refreshed_at
+      FROM countries 
+      WHERE 1=1
+    `;
       const params = [];
 
       if (filters.region) {
-        query += ` AND region = ?`;
+        query += " AND region = ?";
         params.push(filters.region);
       }
 
       if (filters.currency) {
-        query += ` AND currency_code = ?`;
+        query += " AND currency_code = ?";
         params.push(filters.currency);
       }
 
+      // Sorting - ensure numeric fields are sorted numerically
       if (filters.sort) {
         const sortMapping = {
-          gdp_desc: "estimated_gdp DESC",
-          gdp_asc: "estimated_gdp ASC",
+          gdp_desc: "CAST(estimated_gdp AS DECIMAL(20,2)) DESC",
+          gdp_asc: "CAST(estimated_gdp AS DECIMAL(20,2)) ASC",
           name_asc: "name ASC",
           name_desc: "name DESC",
           population_desc: "population DESC",
@@ -31,10 +75,10 @@ class CountryModel {
         };
         query += ` ORDER BY ${sortMapping[filters.sort] || "name ASC"}`;
       } else {
-        query += ` ORDER BY name ASC`;
+        query += " ORDER BY name ASC";
       }
-      const results = await database.query(query, params);
 
+      const results = await database.query(query, params);
       return Array.isArray(results) ? results : [];
     } catch (error) {
       console.error("Error in Country.findAll:", error);

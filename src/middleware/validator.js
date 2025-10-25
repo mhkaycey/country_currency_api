@@ -36,9 +36,9 @@ export const countryNameValidation = [
     .withMessage(
       "Country name is required and must be between 1 and 255 characters"
     )
-    .matches(/^[a-zA-Z\s\-()]+$/)
+    .matches(/^[a-zA-Z\s\-()',.]+$/)
     .withMessage(
-      "Country name can only contain letters, spaces, hyphens, and parentheses"
+      "Country name can only contain letters, spaces, hyphens, and common punctuation"
     ),
 ];
 
@@ -46,19 +46,20 @@ export const statusValidation = [];
 
 export const imageValidation = [];
 
-// Validation error handler middleware
 export const handleValidationErrors = (req, res, next) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
     const errorDetails = {};
     errors.array().forEach((error) => {
-      errorDetails[error.path] = error.msg;
+      // Extract field name from param or query
+      const field = error.type === "field" ? error.path : error.param;
+      errorDetails[field] = error.msg;
     });
 
     return res.status(400).json({
       error: "Validation failed",
-      // details: errorDetails,
+      details: errorDetails,
     });
   }
 
@@ -68,6 +69,14 @@ export const handleValidationErrors = (req, res, next) => {
 // Custom validation for country existence
 export const validateCountryExists = async (req, res, next) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        error: "Validation failed",
+        details: errors.array(),
+      });
+    }
+
     const CountryModel = (await import("../model/countryModel.js")).default;
     const country = await CountryModel.findByName(req.params.name);
 
@@ -79,9 +88,19 @@ export const validateCountryExists = async (req, res, next) => {
     next();
   } catch (error) {
     console.error("Country validation error:", error);
-    if (error.message && error.message.includes("Cannot read properties")) {
-      return res.status(404).json({ error: "Country not found" });
-    }
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+export const validateCountryNameOnly = [
+  param("name")
+    .trim()
+    .isLength({ min: 1, max: 255 })
+    .withMessage(
+      "Country name is required and must be between 1 and 255 characters"
+    )
+    .matches(/^[a-zA-Z\s\-()',.]+$/)
+    .withMessage(
+      "Country name can only contain letters, spaces, hyphens, and common punctuation"
+    ),
+];

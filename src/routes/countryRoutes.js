@@ -2,22 +2,35 @@ import { Router } from "express";
 
 import countryController from "../controllers/countryController.js";
 import {
-  refreshCountriesValidation,
   getCountriesValidation,
+  countryNameValidation,
+  refreshCountriesValidation,
   statusValidation,
+  imageValidation,
   handleValidationErrors,
   validateCountryExists,
-  countryNameValidation,
-  imageValidation,
+  validateCountryNameOnly,
 } from "../middleware/validator.js";
 
 const countryRouter = Router();
 
 countryRouter.post(
   "/refresh",
-  refreshCountriesValidation,
-  handleValidationErrors,
+  // refreshCountriesValidation,
+  // handleValidationErrors,
   countryController.refreshCountries
+);
+countryRouter.get(
+  "/image",
+  // imageValidation,
+  // handleValidationErrors,
+  countryController.getImage
+);
+countryRouter.get(
+  "/status",
+  // statusValidation,
+  // handleValidationErrors,
+  countryController.getStatus
 );
 countryRouter.get(
   "/",
@@ -25,18 +38,7 @@ countryRouter.get(
   handleValidationErrors,
   countryController.getCountries
 );
-countryRouter.get(
-  "/image",
-  imageValidation,
-  handleValidationErrors,
-  countryController.getImage
-);
-countryRouter.get(
-  "/status",
-  statusValidation,
-  handleValidationErrors,
-  countryController.getStatus
-);
+
 countryRouter.get(
   "/:name",
   countryNameValidation,
@@ -46,9 +48,9 @@ countryRouter.get(
 );
 countryRouter.delete(
   "/:name",
-  countryNameValidation,
+  validateCountryNameOnly,
   handleValidationErrors,
-  validateCountryExists,
+  // validateCountryExists,
   countryController.deleteCountry
 );
 

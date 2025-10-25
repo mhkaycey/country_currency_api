@@ -46,17 +46,16 @@ class CountryController {
 
   async deleteCountry(req, res) {
     try {
-      await countryService.deleteCountry(req.params.name);
-      res.json({ message: "Country deleted successfully" });
-    } catch (error) {
-      if (error.message === "Country not found") {
-        return res.status(404).json({ error: "Country not found" });
+      const result = await countryService.deleteCountry(req.params.name);
+
+      if (result.deleted) {
+        res.json({ message: "Country deleted successfully" });
+      } else {
+        res.status(404).json({ error: "Country not found" });
       }
+    } catch (error) {
       console.error("Delete country error:", error);
-      res.status(500).json({
-        error: "Internal server error",
-        //details: process.env.NODE_ENV === 'development' ? error.message : undefined
-      });
+      res.status(500).json({ error: "Internal server error" });
     }
   }
 
@@ -68,8 +67,6 @@ class CountryController {
       console.error("Get status error:", error);
       res.status(500).json({
         error: "Internal server error",
-        details:
-          process.env.NODE_ENV === "development" ? error.message : undefined,
       });
     }
   }

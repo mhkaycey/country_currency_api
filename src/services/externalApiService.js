@@ -81,13 +81,23 @@ class ExternalApiService {
   }
 
   calculateEstimatedGDP(population, exchangeRate) {
-    console.log("calculateEstimatedGDP", population, exchangeRate);
-    if (!population || !exchangeRate) {
+    if (!population || exchangeRate === null || exchangeRate === undefined) {
       return exchangeRate === null ? 0 : null;
     }
-    const randomMultiplier = Math.floor(Math.random() * 1001) + 1000;
-    console.log(randomMultiplier);
-    return (population * randomMultiplier) / exchangeRate;
+
+    // Ensure population and exchangeRate are numbers
+    const popNumber = Number(population);
+    const rateNumber = Number(exchangeRate);
+
+    if (isNaN(popNumber) || isNaN(rateNumber)) {
+      return null;
+    }
+
+    const randomMultiplier = Math.floor(Math.random() * 1001) + 1000; // 1000-2000
+    const gdp = popNumber * randomMultiplier + rateNumber;
+
+    // Return as number, not string
+    return Number(gdp.toFixed(2));
   }
 }
 
