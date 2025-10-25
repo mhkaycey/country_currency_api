@@ -89,7 +89,8 @@ class CountryModel {
   static async findByName(name) {
     try {
       const results = await database.query(
-        "SELECT * FROM countries WHERE LOWER(name) = LOWER(?)",
+        `SELECT id, name, capital, region, population, currency_code, 
+             exchange_rate, estimated_gdp, flag_url, last_refreshed_at FROM countries WHERE LOWER(name) = LOWER(?)`,
         [name]
       );
 

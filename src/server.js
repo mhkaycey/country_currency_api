@@ -6,6 +6,7 @@ import rateLimit from "express-rate-limit";
 import { SERVER_URL, PORT } from "./config/env.config.js";
 
 import countryRoutes from "./routes/countryRoutes.js";
+import statusRouter from "./routes/statusRoutes.js";
 
 const app = express();
 
@@ -37,15 +38,14 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/countries", countryRoutes);
+app.use("/status", statusRouter);
 
 app.get("/", (req, res) => {
   res.status(200).json({
     status: "success",
     message: "Country Currency API",
-
     endpoints: {
       refresh: `${SERVER_URL}${PORT}/refresh`,
-
       getCountries: `${SERVER_URL}:${PORT}/countries`,
       getCountry: `${SERVER_URL}:${PORT}/countries/:name`,
       deleteCountry: `${SERVER_URL}:${PORT}/countries/:name`,

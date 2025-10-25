@@ -26,12 +26,7 @@ countryRouter.get(
   // handleValidationErrors,
   countryController.getImage
 );
-countryRouter.get(
-  "/status",
-  // statusValidation,
-  // handleValidationErrors,
-  countryController.getStatus
-);
+
 countryRouter.get(
   "/",
   getCountriesValidation,
